@@ -22,18 +22,19 @@ int main(){
     while(1){
 
         //////////// Red Player operations ////////////
-        // algorithm_A(board, red_player, index);
-        cout << "input the index:  ";
-        cin >> index[0] >> index[1];
+        algorithm_A(board, red_player, index);
+        cout << "RED player: " << endl;
+        // cin >> index[0] >> index[1];
         board.place_orb(index[0], index[1], &red_player);
 
         if(rules_violation(red_player)) return 0;
 
         board.print_current_board(index[0], index[1], round);
+        // cout << "score: " << evaluate(board, red_player) << endl;
         round++;
         
-        // this_thread::sleep_for(1000ms);
-        system("Pause");
+        this_thread::sleep_for(500ms);
+        // system("Pause");
 
         if(board.win_the_game(red_player) && !first_two_step){
             cout << "Red Player won the game !!!" << endl;
@@ -47,10 +48,11 @@ int main(){
         if(rules_violation(blue_player)) return 0;
         
         board.print_current_board(index[0], index[1], round);
+        // cout << "score: " << evaluate(board, blue_player) << endl;
         round++;
         
-        //this_thread::sleep_for(1000ms);
-        system("Pause");
+        this_thread::sleep_for(500ms);
+        // system("Pause");
 
         if(board.win_the_game(blue_player) && !first_two_step){
             cout << "Blue Player won the game !!!" << endl;

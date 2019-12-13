@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <cassert>
 #include "../include/algorithm.h"
 
 using namespace std;
@@ -25,35 +26,96 @@ using namespace std;
  * 4. The function that print out the current board statement
 *************************************************************************/
 
+struct Point {
+    int x, y;
+    int score;
+    bool is_null;
+
+    Point(int _x = 0, int _y = 0): x(_x), y(_y), score(0), is_null(true) {}
+};
+
+int evaluate(Board &board, char pl_color);
+Point negamax(Board board, int ply, Player &player, Player &opponent);
+
 
 void algorithm_A(Board board, Player player, int index[]){
+    const int inf = 9999999;
 
-    // cout << board.get_capacity(0, 0) << endl;
-    // cout << board.get_orbs_num(0, 0) << endl;
-    // cout << board.get_cell_color(0, 0) << endl;
-    // board.print_current_board(0, 0, 0);
-
-    //////////// Random Algorithm ////////////
-    // Here is the random algorithm for your reference, you can delete or comment it.
-    srand(time(NULL));
-    int row, col;
-    int color = player.get_color();
+    char pl_color = player.get_color();
+    char op_color = (pl_color == RED ? BLUE : RED);
     
-    while(1){
-        row = rand() % 5;
-        col = rand() % 6;
-        if(board.get_cell_color(row, col) == color || board.get_cell_color(row, col) == 'w') break;
-    }
+    Player opponent(op_color);
 
-    index[0] = row;
-    index[1] = col;
+    Point place_idx = negamax(board, 3, player, opponent);
+
+    index[0] = place_idx.x;
+    index[1] = place_idx.y;
 }
 
-int evaluate(){
-    int score = 0;
+Point negamax(Board board, int ply, Player &player, Player &opponent){
+    Point best;
+    char pl_color = player.get_color();
+    char op_color = opponent.get_color();
+
+    if (ply == 0){
+        best.score = evaluate(board, pl_color);
+        return best;
+    }
+
+    bool no_more_move = true;
     for (int i = 0; i < ROW; i++){
         for (int j = 0; j < COL; j++){
-            //int sc_per_cell = 
+            if (board.get_cell_color(i, j) == op_color){
+                continue;
+            }
+            no_more_move = false;
+            
+            Board next_board = board;
+            assert(next_board.place_orb(i, j, &player));
+            Point result = negamax(next_board, ply - 1, opponent, player);
+
+            if (best.is_null || -result.score > best.score) {
+                best.is_null = false;
+                best.x = i; best.y = j;
+                best.score = -result.score;
+            }
         }
     }
+
+    if (no_more_move){
+        best.score = evaluate(board, pl_color);
+        return best;
+    }
+
+    return best;
+}
+
+int evaluate(Board &board, char pl_color){
+    const int inf = 9999999;
+
+    int score = 0;
+    bool all_player = true, all_opponent = true;
+
+    for (int i = 0; i < ROW; i++){
+        for (int j = 0; j < COL; j++){
+            char c = board.get_cell_color(i, j);
+            if (c == pl_color){
+                all_opponent = false;
+                score++;
+            }
+            else if (c != 'w') {
+                all_player = false;
+                score--;
+            }
+        }
+    }
+
+    if (all_opponent){
+        return -inf;
+    }
+    else if (all_player) {
+        return inf;
+    }
+
+    return score;
 }
