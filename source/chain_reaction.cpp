@@ -11,56 +11,71 @@ using namespace std::chrono_literals;
 
 int main(){
 
-    Board board;
-    Player red_player(RED);
-    Player blue_player(BLUE);
+    srand(time(NULL));
+    int r_win = 0, b_win = 0;
+    
+    int cnt;
+    cout << "input battle times: ";
+    cin >> cnt;
 
-    bool first_two_step = true;
-    int round = 1;
-    int index[2];
+    for (int t = 0; t < cnt; t++){
+        Board board;
+        Player red_player(RED);
+        Player blue_player(BLUE);
 
-    while(1){
+        bool first_two_step = true;
+        int round = 1;
+        int index[2];
 
-        //////////// Red Player operations ////////////
-        algorithm_A(board, red_player, index);
-        cout << "RED player: " << endl;
-        // cin >> index[0] >> index[1];
-        board.place_orb(index[0], index[1], &red_player);
+        while(1){
 
-        if(rules_violation(red_player)) return 0;
+            //////////// Red Player operations ////////////
+            algorithm_A(board, red_player, index);
+            // cout << "RED player: " << endl;
+            // cin >> index[0] >> index[1];
+            board.place_orb(index[0], index[1], &red_player);
 
-        board.print_current_board(index[0], index[1], round);
-        // cout << "score: " << evaluate(board, red_player) << endl;
-        round++;
-        
-        this_thread::sleep_for(500ms);
-        // system("Pause");
+            if(rules_violation(red_player)) return 0;
 
-        if(board.win_the_game(red_player) && !first_two_step){
-            cout << "Red Player won the game !!!" << endl;
-            return 0;
+            // board.print_current_board(index[0], index[1], round);
+            // cout << "score: " << evaluate(board, red_player) << endl;
+            round++;
+            
+            // this_thread::sleep_for(500ms);
+            // system("Pause");
+
+            if(board.win_the_game(red_player) && !first_two_step){
+                cout << "R ";
+                r_win++;
+                break;
+            }
+
+            //////////// Blue Player operations ////////////
+            algorithm_B(board, blue_player, index);
+            board.place_orb(index[0], index[1], &blue_player);
+
+            if(rules_violation(blue_player)) return 0;
+            
+            // board.print_current_board(index[0], index[1], round);
+            // cout << "score: " << evaluate(board, blue_player) << endl;
+            round++;
+            
+            // this_thread::sleep_for(500ms);
+            // system("Pause");
+
+            if(board.win_the_game(blue_player) && !first_two_step){
+                cout << "B ";
+                b_win++;
+                break;
+            }
+
+            first_two_step = false;
         }
-
-        //////////// Blue Player operations ////////////
-        algorithm_B(board, blue_player, index);
-        board.place_orb(index[0], index[1], &blue_player);
-
-        if(rules_violation(blue_player)) return 0;
-        
-        board.print_current_board(index[0], index[1], round);
-        // cout << "score: " << evaluate(board, blue_player) << endl;
-        round++;
-        
-        this_thread::sleep_for(500ms);
-        // system("Pause");
-
-        if(board.win_the_game(blue_player) && !first_two_step){
-            cout << "Blue Player won the game !!!" << endl;
-            return 0;
-        }
-
-        first_two_step = false;
+        // this_thread::sleep_for(200ms);
     }
+
+    cout << "Red  win: " << r_win << endl;
+    cout << "Blue win: " << b_win << endl;
 
     return 0;
 } 
