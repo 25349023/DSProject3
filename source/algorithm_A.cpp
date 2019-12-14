@@ -36,6 +36,8 @@ struct Point {
 
 int evaluate(Board &board, char pl_color);
 Point negamax(Board board, int ply, Player &player, Player &opponent);
+Point alpha_beta(Board board, int ply, Player &player, Player &opponent,
+                 int alpha, int beta);
 
 
 void algorithm_A(Board board, Player player, int index[]){
@@ -46,7 +48,7 @@ void algorithm_A(Board board, Player player, int index[]){
     
     Player opponent(op_color);
 
-    Point place_idx = negamax(board, 3, player, opponent);
+    Point place_idx = alpha_beta(board, 3, player, opponent, -inf, inf);
 
     index[0] = place_idx.x;
     index[1] = place_idx.y;
@@ -78,6 +80,50 @@ Point negamax(Board board, int ply, Player &player, Player &opponent){
                 best.is_null = false;
                 best.x = i; best.y = j;
                 best.score = -result.score;
+            }
+        }
+    }
+
+    if (no_more_move){
+        best.score = evaluate(board, pl_color);
+        return best;
+    }
+
+    return best;
+}
+
+Point alpha_beta(Board board, int ply, Player &player, Player &opponent,
+                 int alpha, int beta){
+    Point best;
+    char pl_color = player.get_color();
+    char op_color = opponent.get_color();
+
+    if (ply == 0){
+        best.score = evaluate(board, pl_color);
+        return best;
+    }
+
+    bool no_more_move = true;
+    for (int i = 0; i < ROW; i++){
+        for (int j = 0; j < COL; j++){
+            if (board.get_cell_color(i, j) == op_color){
+                continue;
+            }
+            no_more_move = false;
+            
+            Board next_board = board;
+            next_board.place_orb(i, j, &player);
+            Point result = alpha_beta(next_board, ply - 1, opponent, player, -beta, -alpha);
+            //cout << beta << " vs. " << -result.score << endl; 
+            if (best.is_null || -result.score > alpha) {
+                best.is_null = false;
+                alpha = -result.score;
+                best.x = i; best.y = j;
+                best.score = alpha;
+            }
+            if (alpha >= beta){
+                //cout << " ret\n";
+                return best;
             }
         }
     }
