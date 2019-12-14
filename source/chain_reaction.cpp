@@ -37,7 +37,7 @@ int main(){
 
             if(rules_violation(red_player)) return 0;
 
-            board.print_current_board(index[0], index[1], round);
+            // board.print_current_board(index[0], index[1], round);
             // cout << "score: " << evaluate(board, red_player) << endl;
             round++;
             

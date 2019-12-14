@@ -48,7 +48,8 @@ void algorithm_A(Board board, Player player, int index[]){
     
     Player opponent(op_color);
 
-    Point place_idx = alpha_beta(board, 3, player, opponent, -inf, inf);
+    Point place_idx = alpha_beta(board, 5, player, opponent, -inf, inf);
+    // Point place_idx = negamax(board, 3, player, opponent);
 
     index[0] = place_idx.x;
     index[1] = place_idx.y;
@@ -59,7 +60,7 @@ Point negamax(Board board, int ply, Player &player, Player &opponent){
     char pl_color = player.get_color();
     char op_color = opponent.get_color();
 
-    if (ply == 0){
+    if (ply == 0 || board.win_the_game(opponent)){
         best.score = evaluate(board, pl_color);
         return best;
     }
@@ -98,10 +99,12 @@ Point alpha_beta(Board board, int ply, Player &player, Player &opponent,
     char pl_color = player.get_color();
     char op_color = opponent.get_color();
 
-    if (ply == 0){
+    if (ply == 0 || board.win_the_game(opponent)){
         best.score = evaluate(board, pl_color);
         return best;
     }
+
+    // cout << ply;
 
     bool no_more_move = true;
     for (int i = 0; i < ROW; i++){
