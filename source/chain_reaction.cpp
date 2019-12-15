@@ -41,7 +41,7 @@ int main(){
             // cout << "score: " << evaluate(board, red_player) << endl;
             round++;
             
-            // this_thread::sleep_for(500ms);
+            // this_thread::sleep_for(100ms);
             // system("Pause");
 
             if(board.win_the_game(red_player) && !first_two_step){
@@ -53,14 +53,14 @@ int main(){
             //////////// Blue Player operations ////////////
             algorithm_B(board, blue_player, index);
             board.place_orb(index[0], index[1], &blue_player);
-
+            // cout << index[0] << "  " << index[1] << endl;
             if(rules_violation(blue_player)) return 0;
             
             // board.print_current_board(index[0], index[1], round);
             // cout << "score: " << evaluate(board, blue_player) << endl;
             round++;
             
-            // this_thread::sleep_for(500ms);
+            // this_thread::sleep_for(100ms);
             // system("Pause");
 
             if(board.win_the_game(blue_player) && !first_two_step){
