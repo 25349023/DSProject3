@@ -62,7 +62,7 @@ Point negamax(Board board, int ply, Player &player, Player &opponent){
     char pl_color = player.get_color();
     char op_color = opponent.get_color();
 
-    if (ply == 0 || board.win_the_game(opponent)){
+    if (ply == 0 || win_game(board, op_color)){
         best.score = evaluate(board, pl_color);
         return best;
     }
