@@ -107,25 +107,28 @@ Point alpha_beta(Board board, int ply, Player &player, Player &opponent,
     }
 
     bool no_more_move = true;
-    for (int i = 0; i < ROW; i++){
-        for (int j = 0; j < COL; j++){
-            if (board.get_cell_color(i, j) == op_color){
-                continue;
-            }
-            no_more_move = false;
-            
-            Board next_board = board;
-            next_board.place_orb(i, j, &player);
-            Point result = alpha_beta(next_board, ply - 1, opponent, player, -beta, -alpha);
-            
-            if (best.is_null || -result.score > alpha) {
-                best.is_null = false;
-                alpha = -result.score;
-                best.x = i; best.y = j;
-                best.score = alpha;
-            }
-            if (alpha >= beta){
-                return best;
+    for (int k = 3; k >= 0; k--){
+        for (int i = 0; i < ROW; i++){
+            for (int j = 0; j < COL; j++){
+                if (board.get_cell_color(i, j) == op_color || 
+                    board.get_orbs_num(i, j) != k){
+                    continue;
+                }
+                no_more_move = false;
+                
+                Board next_board = board;
+                next_board.place_orb(i, j, &player);
+                Point result = alpha_beta(next_board, ply - 1, opponent, player, -beta, -alpha);
+                
+                if (best.is_null || -result.score > alpha) {
+                    best.is_null = false;
+                    alpha = -result.score;
+                    best.x = i; best.y = j;
+                    best.score = alpha;
+                }
+                if (alpha >= beta){
+                    return best;
+                }
             }
         }
     }
