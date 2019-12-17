@@ -34,6 +34,7 @@ struct Point {
     Point(int _x = 0, int _y = 0): x(_x), y(_y), score(0), is_null(true) {}
 };
 
+int cal_score_around(Board &board, char pl_color, int x, int y);
 int evaluate(Board &board, char pl_color);
 bool win_game(Board &board, char pl_color);
 Point negamax(Board board, int ply, Player &player, Player &opponent);
@@ -161,7 +162,8 @@ bool win_game(Board &board, char pl_color){
 int evaluate(Board &board, char pl_color){
     const int inf = 9999999;
 
-    int score = 0;
+    int pl_score = 0, op_score = 0;
+    char op_color = (pl_color == RED ? BLUE : RED);
     bool all_player = true, all_opponent = true;
 
     for (int i = 0; i < ROW; i++){
@@ -169,11 +171,17 @@ int evaluate(Board &board, char pl_color){
             char c = board.get_cell_color(i, j);
             if (c == pl_color){
                 all_opponent = false;
-                score++;
+                pl_score++;
+                if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
+                    // pl_score += cal_score_around(board, pl_color, i, j);
+                }
             }
-            else if (c != 'w') {
+            else if (c == op_color) {
                 all_player = false;
-                score--;
+                op_score++;
+                if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
+                    // op_score += cal_score_around(board, op_color, i, j);
+                }
             }
         }
     }
@@ -183,6 +191,32 @@ int evaluate(Board &board, char pl_color){
     }
     else if (all_player) {
         return inf;
+    }
+
+    return pl_score - op_score;
+}
+
+int cal_score_around(Board &board, char pl_color, int x, int y){
+    const int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    int score = 0;
+    char op_color = (pl_color == RED ? BLUE : RED);
+
+    for (int k = 0; k < 4; k++){
+        int tx = x + dir[k][0], ty = y + dir[k][1];
+        if (tx < 0 || ty < 0 || tx >= ROW || ty >= COL){
+            continue;
+        }
+        if (board.get_orbs_num(tx, ty) == board.get_capacity(tx, ty) - 1){
+            if (board.get_cell_color(tx, ty) == pl_color){
+                score += 2;
+            }
+            else if (board.get_cell_color(tx, ty) == op_color){
+                score += 1;
+            }
+        }
+        if (board.get_cell_color(tx, ty) == op_color){
+            score++;
+        }
     }
 
     return score;
