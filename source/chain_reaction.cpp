@@ -45,7 +45,7 @@ int main(){
             // system("Pause");
 
             if(board.win_the_game(red_player) && !first_two_step){
-                cout << "R ";
+                cout << "R " << flush;
                 r_win++;
                 break;
             }
@@ -64,7 +64,7 @@ int main(){
             // system("Pause");
 
             if(board.win_the_game(blue_player) && !first_two_step){
-                cout << "B ";
+                cout << "B " << flush;
                 b_win++;
                 break;
             }
