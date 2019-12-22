@@ -172,17 +172,21 @@ int evaluate(Board &board, char pl_color){
             if (c == pl_color){
                 all_opponent = false;
                 pl_score++;
-                    //pl_score += cal_score_around(board, pl_color, i, j);
                 if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
                     pl_score++;
+                    if (board.get_capacity(i, j) <= 2){
+                        pl_score += 2;
+                    }
                 }
             }
             else if (c == op_color) {
                 all_player = false;
                 op_score++;
                 if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
-                    // op_score += cal_score_around(board, op_color, i, j);
                     op_score++;
+                    if (board.get_capacity(i, j) <= 2){
+                        op_score += 2;
+                    }
                 }
             }
         }
