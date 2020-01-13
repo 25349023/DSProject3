@@ -34,7 +34,6 @@ struct Point {
     Point(int _x = 0, int _y = 0): x(_x), y(_y), score(0), is_null(true) {}
 };
 
-int cal_score_around(Board &board, char pl_color, int x, int y);
 int evaluate(Board &board, char pl_color);
 bool win_game(Board &board, char pl_color);
 Point negamax(Board board, int ply, Player &player, Player &opponent);
@@ -50,8 +49,7 @@ void algorithm_A(Board board, Player player, int index[]){
     
     Player opponent(op_color);
 
-    Point place_idx = alpha_beta(board, 7, player, opponent, -inf, inf);
-    // assert(!place_idx.is_null);
+    Point place_idx = alpha_beta(board, 6, player, opponent, -inf, inf);
     // Point place_idx = negamax(board, 3, player, opponent);
 
     index[0] = place_idx.x;
@@ -172,22 +170,10 @@ int evaluate(Board &board, char pl_color){
             if (c == pl_color){
                 all_opponent = false;
                 pl_score++;
-                // if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
-                //     pl_score++;
-                //     if (board.get_capacity(i, j) <= 2){
-                //         pl_score += 2;
-                //     }
-                // }
             }
             else if (c == op_color) {
                 all_player = false;
                 op_score++;
-                // if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
-                //     op_score++;
-                //     if (board.get_capacity(i, j) <= 2){
-                //         op_score += 2;
-                //     }
-                // }
             }
         }
     }
@@ -200,40 +186,4 @@ int evaluate(Board &board, char pl_color){
     }
 
     return pl_score - op_score;
-}
-
-int cal_score_around(Board &board, char pl_color, int x, int y){
-    const int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-    int score = 0;
-    char op_color = (pl_color == RED ? BLUE : RED);
-    bool vulnerable = false;
-    for (int k = 0; k < 4; k++){
-        int tx = x + dir[k][0], ty = y + dir[k][1];
-        if (tx < 0 || ty < 0 || tx >= ROW || ty >= COL){
-            continue;
-        }
-        int num = board.get_orbs_num(tx, ty), cap = board.get_capacity(tx, ty);
-        char clr = board.get_cell_color(tx, ty);
-        if (board.get_orbs_num(x, y) == board.get_capacity(x, y) - 1){
-            if (num == cap - 1){
-                if (clr == pl_color){
-                    score += 3;
-                }
-                else if (clr == op_color){
-                    score -= board.get_capacity(x, y) - 2;
-                }
-            }
-        }
-
-        if (clr == op_color){
-            vulnerable = true;
-        }
-    }
-
-    if (!vulnerable){
-        score += 4 - board.get_capacity(x, y);
-    }
-
-
-    return score;
 }
