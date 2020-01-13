@@ -50,7 +50,7 @@ void algorithm_A(Board board, Player player, int index[]){
     
     Player opponent(op_color);
 
-    Point place_idx = alpha_beta(board, 1, player, opponent, -inf, inf);
+    Point place_idx = alpha_beta(board, 7, player, opponent, -inf, inf);
     // assert(!place_idx.is_null);
     // Point place_idx = negamax(board, 3, player, opponent);
 
@@ -172,22 +172,22 @@ int evaluate(Board &board, char pl_color){
             if (c == pl_color){
                 all_opponent = false;
                 pl_score++;
-                if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
-                    pl_score++;
-                    if (board.get_capacity(i, j) <= 2){
-                        pl_score += 2;
-                    }
-                }
+                // if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
+                //     pl_score++;
+                //     if (board.get_capacity(i, j) <= 2){
+                //         pl_score += 2;
+                //     }
+                // }
             }
             else if (c == op_color) {
                 all_player = false;
                 op_score++;
-                if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
-                    op_score++;
-                    if (board.get_capacity(i, j) <= 2){
-                        op_score += 2;
-                    }
-                }
+                // if (board.get_orbs_num(i, j) == board.get_capacity(i, j) - 1){ // EC
+                //     op_score++;
+                //     if (board.get_capacity(i, j) <= 2){
+                //         op_score += 2;
+                //     }
+                // }
             }
         }
     }
