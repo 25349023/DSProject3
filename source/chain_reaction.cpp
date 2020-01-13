@@ -45,13 +45,13 @@ int main(){
             // system("Pause");
 
             if(board.win_the_game(red_player) && !first_two_step){
-                cout << "R ";
+                cout << "R " << flush;
                 r_win++;
                 break;
             }
 
             //////////// Blue Player operations ////////////
-            algorithm_B(board, blue_player, index);
+            algorithm_E(board, blue_player, index);
             board.place_orb(index[0], index[1], &blue_player);
             // cout << index[0] << "  " << index[1] << endl;
             if(rules_violation(blue_player)) return 0;
@@ -64,7 +64,7 @@ int main(){
             // system("Pause");
 
             if(board.win_the_game(blue_player) && !first_two_step){
-                cout << "B ";
+                cout << "B " << flush;
                 b_win++;
                 break;
             }

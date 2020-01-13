@@ -49,8 +49,7 @@ void algorithm_A(Board board, Player player, int index[]){
     
     Player opponent(op_color);
 
-    Point place_idx = alpha_beta(board, 5, player, opponent, -inf, inf);
-    // assert(!place_idx.is_null);
+    Point place_idx = alpha_beta(board, 6, player, opponent, -inf, inf);
     // Point place_idx = negamax(board, 3, player, opponent);
 
     index[0] = place_idx.x;
@@ -107,25 +106,28 @@ Point alpha_beta(Board board, int ply, Player &player, Player &opponent,
     }
 
     bool no_more_move = true;
-    for (int i = 0; i < ROW; i++){
-        for (int j = 0; j < COL; j++){
-            if (board.get_cell_color(i, j) == op_color){
-                continue;
-            }
-            no_more_move = false;
-            
-            Board next_board = board;
-            next_board.place_orb(i, j, &player);
-            Point result = alpha_beta(next_board, ply - 1, opponent, player, -beta, -alpha);
-            
-            if (best.is_null || -result.score > alpha) {
-                best.is_null = false;
-                alpha = -result.score;
-                best.x = i; best.y = j;
-                best.score = alpha;
-            }
-            if (alpha >= beta){
-                return best;
+    for (int k = 3; k >= 0; k--){
+        for (int i = 0; i < ROW; i++){
+            for (int j = 0; j < COL; j++){
+                if (board.get_cell_color(i, j) == op_color || 
+                    board.get_orbs_num(i, j) != k){
+                    continue;
+                }
+                no_more_move = false;
+                
+                Board next_board = board;
+                next_board.place_orb(i, j, &player);
+                Point result = alpha_beta(next_board, ply - 1, opponent, player, -beta, -alpha);
+                
+                if (best.is_null || -result.score > alpha) {
+                    best.is_null = false;
+                    alpha = -result.score;
+                    best.x = i; best.y = j;
+                    best.score = alpha;
+                }
+                if (alpha >= beta){
+                    return best;
+                }
             }
         }
     }
@@ -158,7 +160,8 @@ bool win_game(Board &board, char pl_color){
 int evaluate(Board &board, char pl_color){
     const int inf = 9999999;
 
-    int score = 0;
+    int pl_score = 0, op_score = 0;
+    char op_color = (pl_color == RED ? BLUE : RED);
     bool all_player = true, all_opponent = true;
 
     for (int i = 0; i < ROW; i++){
@@ -166,11 +169,11 @@ int evaluate(Board &board, char pl_color){
             char c = board.get_cell_color(i, j);
             if (c == pl_color){
                 all_opponent = false;
-                score++;
+                pl_score++;
             }
-            else if (c != 'w') {
+            else if (c == op_color) {
                 all_player = false;
-                score--;
+                op_score++;
             }
         }
     }
@@ -182,5 +185,5 @@ int evaluate(Board &board, char pl_color){
         return inf;
     }
 
-    return score;
+    return pl_score - op_score;
 }
