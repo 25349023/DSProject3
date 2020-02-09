@@ -3,4 +3,6 @@
 *.pdf
 *.md
 
+*.o
 *.exe
+*.out
